@@ -34,7 +34,7 @@ Cada personaje incluye:
 ✅ Interfaz completamente inspirada en Star Wars  
 ✅ Tarjetas visuales diferenciadas por afiliación  
 ✅ Diseño responsivo para Android  
-✅ Imágenes locales optimizadas  
+✅ Imágenes optimizadas  
 ✅ Fondo temático espacial  
 ✅ Arquitectura organizada y mantenible  
 
@@ -125,9 +125,9 @@ _Aquí puedes agregar capturas del proyecto más adelante._
 
 ## 👩‍💻 Autora
 
-**Jazmín Bustillos**
+**Jazmín Bustillos Segundo Bol.2020601483**
 
-Proyecto académico desarrollado como práctica de desarrollo móvil Android con Kotlin y Jetpack Compose.
+Proyecto de la materia Porgramación de dispositivos moviles, desarrollado como práctica de desarrollo móvil Android con Kotlin y Jetpack Compose.
 
 ---
 
@@ -140,6 +140,4 @@ Proyecto académico desarrollado como práctica de desarrollo móvil Android con
 
 ---
 
-## ⭐ Repositorio
 
-Si este proyecto te resulta interesante, puedes darle una estrella ⭐ al repositorio.
