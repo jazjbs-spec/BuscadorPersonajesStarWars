@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -23,6 +21,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.jazminbustillos.starwarsfinder.model.Personaje
 import com.jazminbustillos.starwarsfinder.repository.StarWarsRepository
 import com.jazminbustillos.starwarsfinder.ui.theme.StarWarsFinderTheme
@@ -31,6 +30,7 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             StarWarsFinderTheme {
                 StarWarsApp()
@@ -96,7 +96,7 @@ fun StarWarsApp() {
         ) {
 
             Text(
-                text = "Buscador de Personajes\nde Star Wars",
+                text = "Buscador de Personajes de Star Wars",
                 color = Color.Yellow,
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
@@ -154,40 +154,24 @@ fun StarWarsApp() {
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(18.dp)
-            ) {
+            LazyColumn {
                 items(filtrados) { personaje ->
                     TarjetaPersonaje(personaje)
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }
     }
+
 }
 
 @Composable
 fun TarjetaPersonaje(personaje: Personaje) {
 
-    val colorBorde =
-        if (personaje.esJedi) Color.Cyan else Color.Red
-
-    val colorTitulo =
-        if (personaje.esJedi) Color.Cyan else Color.Red
-
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(
-                width = 3.dp,
-                color = colorBorde,
-                shape = RoundedCornerShape(24.dp)
-            ),
-        shape = RoundedCornerShape(24.dp),
+        modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = Color(0xCC111111)
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 12.dp
         )
     ) {
 
@@ -195,61 +179,28 @@ fun TarjetaPersonaje(personaje: Personaje) {
             modifier = Modifier.padding(16.dp)
         ) {
 
-            Box(
+            AsyncImage(
+                model = personaje.imagen,
+                contentDescription = personaje.nombre,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(220.dp),
-                contentAlignment = Alignment.Center
-            ) {
-
-                Image(
-                    painter = painterResource(id = personaje.imagen),
-                    contentDescription = personaje.nombre,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(18.dp)),
-                    contentScale = ContentScale.Fit
-                )
-            }
-
-            Spacer(modifier = Modifier.height(14.dp))
-
-            Text(
-                text = personaje.nombre,
-                color = Color.Yellow,
-                fontSize = 26.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            Text(
-                text = personaje.subtitulo,
-                color = colorTitulo,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold
+                    .height(250.dp)
+                    .clip(RoundedCornerShape(18.dp)),
+                contentScale = ContentScale.Crop
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "Edad: ${personaje.edad}",
-                color = Color.White,
-                fontSize = 15.sp
+                text = personaje.nombre,
+                color = Color.Yellow,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
             )
 
             Text(
                 text = "Altura: ${personaje.altura}",
-                color = Color.White,
-                fontSize = 15.sp
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Text(
-                text = personaje.descripcion,
-                color = Color.LightGray,
-                fontSize = 15.sp
+                color = Color.White
             )
         }
     }
