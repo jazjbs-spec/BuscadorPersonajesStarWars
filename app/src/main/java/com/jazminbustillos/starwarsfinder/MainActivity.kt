@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,25 +31,46 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             StarWarsFinderTheme {
                 StarWarsApp()
             }
         }
     }
+
 }
 
 @Composable
 fun StarWarsApp() {
+
     val repository = remember { StarWarsRepository() }
-    var personajes by remember { mutableStateOf<List<Personaje>>(emptyList()) }
-    var busqueda by remember { mutableStateOf("") }
+
+    var personajes by remember {
+        mutableStateOf<List<Personaje>>(emptyList())
+    }
+
+    var busqueda by remember {
+        mutableStateOf("")
+    }
+
+    var cargando by remember {
+        mutableStateOf(true)
+    }
+
+    var exitoApi by remember {
+        mutableStateOf(false)
+    }
+
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         scope.launch {
-            personajes = repository.obtenerPersonajes()
+
+            val resultado = repository.obtenerPersonajes()
+
+            personajes = resultado.personajes
+            exitoApi = resultado.exito
+            cargando = false
         }
     }
 
@@ -58,7 +78,9 @@ fun StarWarsApp() {
         it.nombre.contains(busqueda, ignoreCase = true)
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
 
         Image(
             painter = painterResource(id = R.drawable.space),
@@ -74,13 +96,37 @@ fun StarWarsApp() {
         ) {
 
             Text(
-                text = "Buscador de Personajes\nde Star Wars!",
+                text = "Buscador de Personajes\nde Star Wars",
                 color = Color.Yellow,
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            when {
+                cargando -> {
+                    CircularProgressIndicator(
+                        color = Color.Yellow
+                    )
+                }
+
+                exitoApi -> {
+                    Text(
+                        text = "✅ Conexión exitosa con SWAPI",
+                        color = Color.Green
+                    )
+                }
+
+                else -> {
+                    Text(
+                        text = "❌ Error al conectar con SWAPI",
+                        color = Color.Red
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -122,8 +168,11 @@ fun StarWarsApp() {
 @Composable
 fun TarjetaPersonaje(personaje: Personaje) {
 
-    val colorBorde = if (personaje.esJedi) Color.Cyan else Color.Red
-    val colorTitulo = if (personaje.esJedi) Color.Cyan else Color.Red
+    val colorBorde =
+        if (personaje.esJedi) Color.Cyan else Color.Red
+
+    val colorTitulo =
+        if (personaje.esJedi) Color.Cyan else Color.Red
 
     Card(
         modifier = Modifier
@@ -137,8 +186,11 @@ fun TarjetaPersonaje(personaje: Personaje) {
         colors = CardDefaults.cardColors(
             containerColor = Color(0xCC111111)
         ),
-        elevation = CardDefaults.cardElevation(12.dp)
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 12.dp
+        )
     ) {
+
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
@@ -146,16 +198,16 @@ fun TarjetaPersonaje(personaje: Personaje) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(280.dp),
+                    .height(220.dp),
                 contentAlignment = Alignment.Center
             ) {
+
                 Image(
                     painter = painterResource(id = personaje.imagen),
                     contentDescription = personaje.nombre,
                     modifier = Modifier
                         .fillMaxSize()
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(Color.Black),
+                        .clip(RoundedCornerShape(18.dp)),
                     contentScale = ContentScale.Fit
                 )
             }
@@ -201,4 +253,5 @@ fun TarjetaPersonaje(personaje: Personaje) {
             )
         }
     }
+
 }
